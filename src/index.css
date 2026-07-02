@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  /* --- ResolveAI design tokens --- */
+  /* Case-file navy: primary UI, sidebar, headers */
+  --color-ink: #12213B;
+  --color-ink-light: #1D3358;
+
+  /* Warm paper background — not pure white, feels like a case file */
+  --color-paper: #F7F5F0;
+  --color-paper-raised: #FFFFFF;
+
+  /* Secondary text */
+  --color-slate: #5B6472;
+  --color-slate-light: #9AA2AF;
+
+  /* Status colors */
+  --color-verified: #1D7A6E;
+  --color-verified-bg: #E4F3F0;
+  --color-alert: #C1432E;
+  --color-alert-bg: #FBEAE7;
+  --color-pending: #f54263;
+  --color-pending-bg: #FCF2E1;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}
+
+/* Visible keyboard focus everywhere — accessibility floor */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
