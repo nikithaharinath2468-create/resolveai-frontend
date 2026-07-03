@@ -83,7 +83,7 @@ const MOCK_FRAUD_INDICATORS = [
 export async function loginUser(email, password) {
   if (USE_MOCK_DATA) {
     await delay(500)
-    return { user: { name: 'Aarav Sharma', email }, token: 'mock-jwt-token' }
+    return { user: { name: email.split('@')[0], email }, token: 'mock-jwt-token' }
   }
   const res = await api.post('/auth/login', { email, password })
   return res.data

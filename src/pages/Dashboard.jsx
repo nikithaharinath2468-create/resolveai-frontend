@@ -26,7 +26,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="font-display font-semibold text-2xl text-ink">Welcome back{user ? `, ${user.name.split(' ')[0]}` : ''}</h1>
-          <p className="text-sm text-slate mt-1">Hey Nikitha, here's your fraud case overview.</p>
+          <p className="text-sm text-slate mt-1">Here's the current state of your fraud cases.</p>
         </div>
         <button
           onClick={() => navigate('/cases/new')}
