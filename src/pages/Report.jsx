@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Loader2, Download, AlertTriangle, FileText } from 'lucide-react'
+import jsPDF from 'jspdf'
 import { fetchAnalysis, generateComplaint } from '../services/api.js'
 
 export default function Report() {

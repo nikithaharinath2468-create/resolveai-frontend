@@ -80,13 +80,22 @@ const MOCK_FRAUD_INDICATORS = [
 // Your pages only ever call these functions, never axios directly.
 // ---------------------------------------------------------------------------
 
-export async function loginUser(email, password) {
+export async function loginUser(identifier, password) {
   if (USE_MOCK_DATA) {
     await delay(500)
-    return { user: { name: email.split('@')[0], email }, token: 'mock-jwt-token' }
+    return { user: { name: identifier.split('@')[0], email: identifier }, token: 'mock-jwt-token' }
   }
-  const res = await api.post('/auth/login', { email, password })
-  return res.data
+
+  // Backend expects { identifier, password } — identifier can be email OR phone.
+  const res = await api.post('/auth/login', { identifier, password })
+
+  // Backend only returns { access_token, token_type } — no user object.
+  // We build a lightweight user object locally from whatever was typed in,
+  // since there's nothing else to display a name from yet.
+  return {
+    user: { name: identifier.split('@')[0], email: identifier },
+    token: res.data.access_token,
+  }
 }
 
 export async function fetchCases() {
@@ -94,7 +103,8 @@ export async function fetchCases() {
     await delay(400)
     return MOCK_CASES
   }
-  const res = await api.get('/cases')
+  // Note the trailing slash — /cases without it will not match the backend route.
+  const res = await api.get('/cases/')
   return res.data
 }
 
@@ -103,28 +113,57 @@ export async function createCase(payload) {
     await delay(500)
     return { id: `RA-2026-0${Math.floor(Math.random() * 900 + 100)}`, ...payload, status: 'pending_evidence', completeness: 10 }
   }
-  const res = await api.post('/cases', payload)
+
+  // Backend only accepts { title, fraud_type, description } — it generates
+  // id/case_number itself, and doesn't accept "amount" or "user_id".
+  // If you want to keep tracking amount on the frontend, you'll need to ask
+  // your Backend Lead to add that field to their schema — for now it's
+  // silently dropped before sending.
+  const res = await api.post('/cases/', {
+    title: payload.title,
+    fraud_type: payload.fraudType,
+    description: payload.description,
+  })
   return res.data
 }
 
-export async function uploadEvidence(caseId, files) {
+// NOTE: this now requires a fileType alongside the files, since the backend
+// applies ONE file_type to the whole upload batch. Default to 'screenshot'
+// since that's the most common evidence type — pass a different one
+// explicitly if your UploadEvidence page ever lets the user choose.
+export async function uploadEvidence(caseId, files, fileType = 'screenshot') {
   if (USE_MOCK_DATA) {
     await delay(1200)
     return { success: true, filesProcessed: files.length }
   }
+
   const formData = new FormData()
+  formData.append('case_id', caseId)
+  formData.append('file_type', fileType)
   files.forEach((f) => formData.append('files', f))
-  const res = await api.post(`/cases/${caseId}/evidence`, formData, {
+
+  // Real endpoint is /evidence/upload — NOT /cases/{id}/evidence.
+  const res = await api.post('/evidence/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   })
+
+  // Response is an ARRAY of evidence objects (one per file), not a single object.
   return res.data
 }
+
+// ---------------------------------------------------------------------------
+// UNCONFIRMED ENDPOINTS — the backend team hasn't built these yet.
+// Left as mock-only for now. When they're ready, ask for the real contract
+// (URL, method, request/response shape) and update these the same way
+// the functions above were fixed.
+// ---------------------------------------------------------------------------
 
 export async function fetchTimeline(caseId) {
   if (USE_MOCK_DATA) {
     await delay(600)
     return MOCK_TIMELINE
   }
+  // TODO: unconfirmed — ask backend team for the real timeline endpoint contract.
   const res = await api.get(`/cases/${caseId}/timeline`)
   return res.data
 }
@@ -134,6 +173,7 @@ export async function fetchAnalysis(caseId) {
     await delay(800)
     return { fields: MOCK_EXTRACTED_FIELDS, indicators: MOCK_FRAUD_INDICATORS, completeness: 86 }
   }
+  // TODO: unconfirmed — ask backend team for the real analysis endpoint contract.
   const res = await api.get(`/cases/${caseId}/analysis`)
   return res.data
 }
@@ -145,6 +185,7 @@ export async function generateComplaint(caseId) {
       text: `To,\nThe Grievance Redressal Officer,\nHDFC Bank\n\nSubject: Unauthorised UPI Transaction — UTR 302819473615 — Case ${caseId}\n\nI am writing to report an unauthorised debit of ₹24,500 from my account on 28 Jun 2026 at 14:04:11 to VPA fraudster@ybl. This transaction was preceded by a fraudulent OTP request and was not authorised by me. I request an immediate investigation and reversal under RBI's Limited Liability guidelines.\n\nRegards,\nAarav Sharma`,
     }
   }
+  // TODO: unconfirmed — ask backend team for the real complaint-generation endpoint contract.
   const res = await api.post(`/cases/${caseId}/complaint`)
   return res.data
 }
