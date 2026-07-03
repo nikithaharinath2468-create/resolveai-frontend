@@ -80,10 +80,13 @@ const MOCK_FRAUD_INDICATORS = [
 // Your pages only ever call these functions, never axios directly.
 // ---------------------------------------------------------------------------
 
+function displayNameFromIdentifier(identifier) {
+  return identifier.includes('@') ? identifier.split('@')[0] : identifier
+}
 export async function loginUser(identifier, password) {
   if (USE_MOCK_DATA) {
     await delay(500)
-    return { user: { name: identifier.split('@')[0], email: identifier }, token: 'mock-jwt-token' }
+    return { user: { name: displayNameFromIdentifier(identifier), email: identifier }, token: 'mock-jwt-token' }
   }
 
   // Backend expects { identifier, password } — identifier can be email OR phone.
@@ -93,7 +96,7 @@ export async function loginUser(identifier, password) {
   // We build a lightweight user object locally from whatever was typed in,
   // since there's nothing else to display a name from yet.
   return {
-    user: { name: identifier.split('@')[0], email: identifier },
+    user: { name: displayNameFromIdentifier(identifier), email: identifier },
     token: res.data.access_token,
   }
 }

@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { loginUser, setAuthToken } from '../services/api.js'
 
 export default function Login() {
-  const [email, setEmail] = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -17,7 +17,7 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-      const { user, token } = await loginUser(email, password)
+      const { user, token } = await loginUser(identifier, password)
       setAuthToken(token)
       login(user, token)
       navigate('/dashboard')
@@ -42,16 +42,17 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-xs font-medium text-slate mb-1.5">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+              <label htmlFor="identifier" className="block text-xs font-medium text-slate mb-1.5">
+            Email or phone number
+            </label>
+             <input
+              id="identifier"
+              type="text"
+             required
+             value={identifier}
+             onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="you@example.com or 9876543210"
+  
                 className="w-full rounded-lg border border-ink/15 px-3 py-2.5 text-sm focus:border-ink focus:ring-1 focus:ring-ink outline-none"
               />
             </div>
