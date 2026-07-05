@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { UploadCloud, FileImage, X, Loader2 } from 'lucide-react'
+import { UploadCloud, FileImage,FileText, X, Loader2 } from 'lucide-react'
 import { uploadEvidence } from '../services/api.js'
 
 export default function UploadEvidence() {
@@ -86,7 +86,14 @@ export default function UploadEvidence() {
         <div className="grid grid-cols-3 gap-3 mt-6">
           {files.map(({ id, preview, file }) => (
             <div key={id} className="relative group border border-ink/10 rounded-lg overflow-hidden bg-paper-raised">
-              <img src={preview} alt={file.name} className="w-full h-28 object-cover" />
+              {file.type === 'application/pdf' ? (
+  <div className="w-full h-28 flex flex-col items-center justify-center gap-1.5 bg-ink/5">
+    <FileText size={28} className="text-alert" />
+    <span className="text-[10px] text-slate-light uppercase tracking-wide">PDF</span>
+  </div>
+) : (
+  <img src={preview} alt={file.name} className="w-full h-28 object-cover" />
+)}
               <button
                 onClick={(e) => { e.stopPropagation(); removeFile(id) }}
                 className="absolute top-1.5 right-1.5 bg-ink/80 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -95,7 +102,11 @@ export default function UploadEvidence() {
                 <X size={12} />
               </button>
               <div className="flex items-center gap-1.5 px-2 py-1.5">
-                <FileImage size={12} className="text-slate-light shrink-0" />
+                {file.type === 'application/pdf' ? (
+  <FileText size={12} className="text-alert shrink-0" />
+) : (
+  <FileImage size={12} className="text-slate-light shrink-0" />
+)}
                 <span className="text-xs text-slate truncate">{file.name}</span>
               </div>
             </div>
