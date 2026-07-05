@@ -55,9 +55,10 @@ export default function UploadEvidence() {
     <div className="max-w-2xl">
       <h1 className="font-display font-semibold text-2xl text-ink mb-1">Upload evidence</h1>
       <p className="text-sm text-slate mb-8">
-        Add screenshots of SMS alerts, chat messages, and transaction confirmations. Case{' '}
-        <span className="font-mono">{caseId}</span>
-      </p>
+  Upload screenshots or PDFs of SMS alerts, chat messages, and transaction confirmations —
+  our AI will automatically extract the amount, UTR, and account details. Case{' '}
+  <span className="font-mono">{caseId}</span>
+</p>
 
       <div
         onDragOver={(e) => { e.preventDefault(); setDragActive(true) }}
@@ -70,12 +71,12 @@ export default function UploadEvidence() {
       >
         <UploadCloud size={28} className="mx-auto text-slate mb-3" />
         <p className="text-sm text-ink font-medium mb-1">Drag & drop screenshots here</p>
-        <p className="text-xs text-slate-light">or click to browse — PNG, JPG up to 10MB each</p>
+        <p className="text-xs text-slate-light">or click to browse — PNG, JPG, or PDF up to 10MB each</p>
         <input
           ref={inputRef}
           type="file"
           multiple
-          accept="image/*"
+          accept="image/*,.pdf"
           className="hidden"
           onChange={(e) => addFiles(e.target.files)}
         />
