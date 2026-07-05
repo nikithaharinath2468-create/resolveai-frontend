@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { ShieldCheck, Loader2 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { loginUser, setAuthToken } from '../services/api.js'
@@ -11,6 +11,8 @@ export default function Login() {
   const [error, setError] = useState('')
   const { login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+const successMessage = location.state?.successMessage 
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -71,7 +73,7 @@ export default function Login() {
                 className="w-full rounded-lg border border-ink/15 px-3 py-2.5 text-sm focus:border-ink focus:ring-1 focus:ring-ink outline-none"
               />
             </div>
-
+            {successMessage && <p className="text-sm text-verified">{successMessage}</p>}
             {error && <p className="text-sm text-alert">{error}</p>}
 
             <button
@@ -84,9 +86,12 @@ export default function Login() {
             </button>
           </form>
 
-          <p className="text-xs text-slate-light text-center mt-6">
-            Demo mode — any email and password will work.
-          </p>
+          <p className="text-sm text-slate text-center mt-6">
+  Don't have an account?{' '}
+  <Link to="/signup" className="text-ink font-medium hover:underline">
+    Sign up
+  </Link>
+</p>
         </div>
       </div>
     </div>

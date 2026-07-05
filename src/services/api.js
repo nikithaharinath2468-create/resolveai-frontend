@@ -4,10 +4,10 @@ import axios from 'axios'
 // SWITCH THIS ONE FLAG when your backend teammate's API is ready.
 // While it's true, every function below returns mock data instantly.
 // ---------------------------------------------------------------------------
-export const USE_MOCK_DATA = true
+export const USE_MOCK_DATA = false
 
 export const api = axios.create({
-  baseURL: 'http://localhost:8000', // change to your Render backend URL later
+  baseURL: 'https://resolveai-backend-7r20.onrender.com',
 })
 
 // Attach JWT automatically to every request once you're using real auth
@@ -99,6 +99,15 @@ export async function loginUser(identifier, password) {
     user: { name: displayNameFromIdentifier(identifier), email: identifier },
     token: res.data.access_token,
   }
+}
+ export async function registerUser({ fullName, email, password, phone }) {
+  const res = await api.post('/auth/signup', {
+    email,
+    password,
+    full_name: fullName,
+    phone: phone || null,
+  })
+  return res.data
 }
 
 export async function fetchCases() {
