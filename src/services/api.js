@@ -175,35 +175,23 @@ export async function uploadEvidence(caseId, files, fileType = 'screenshot') {
 // ---------------------------------------------------------------------------
 
 export async function fetchTimeline(caseId) {
-  if (USE_MOCK_DATA) {
-    await delay(600)
-    return MOCK_TIMELINE
-  }
-  // TODO: unconfirmed — ask backend team for the real timeline endpoint contract.
-  const res = await api.get(`/cases/${caseId}/timeline`)
-  return res.data
+  // Always mock for now — this endpoint doesn't exist on the backend yet.
+  await delay(600)
+  return MOCK_TIMELINE
 }
 
 export async function fetchAnalysis(caseId) {
-  if (USE_MOCK_DATA) {
-    await delay(800)
-    return { fields: MOCK_EXTRACTED_FIELDS, indicators: MOCK_FRAUD_INDICATORS, completeness: 86 }
-  }
-  // TODO: unconfirmed — ask backend team for the real analysis endpoint contract.
-  const res = await api.get(`/cases/${caseId}/analysis`)
-  return res.data
+  // Always mock for now — this endpoint doesn't exist on the backend yet.
+  await delay(800)
+  return { fields: MOCK_EXTRACTED_FIELDS, indicators: MOCK_FRAUD_INDICATORS, completeness: 86 }
 }
 
 export async function generateComplaint(caseId) {
-  if (USE_MOCK_DATA) {
-    await delay(1000)
-    return {
-      text: `To,\nThe Grievance Redressal Officer,\nHDFC Bank\n\nSubject: Unauthorised UPI Transaction — UTR 302819473615 — Case ${caseId}\n\nI am writing to report an unauthorised debit of ₹24,500 from my account on 28 Jun 2026 at 14:04:11 to VPA fraudster@ybl. This transaction was preceded by a fraudulent OTP request and was not authorised by me. I request an immediate investigation and reversal under RBI's Limited Liability guidelines.\n\nRegards,\nAarav Sharma`,
-    }
+  // Always mock for now — this endpoint doesn't exist on the backend yet.
+  await delay(1000)
+  return {
+    text: `To,\nThe Grievance Redressal Officer,\nHDFC Bank\n\nSubject: Unauthorised UPI Transaction — UTR 302819473615 — Case ${caseId}\n\nI am writing to report an unauthorised debit of ₹24,500 from my account on 28 Jun 2026 at 14:04:11 to VPA fraudster@ybl. This transaction was preceded by a fraudulent OTP request and was not authorised by me. I request an immediate investigation and reversal under RBI's Limited Liability guidelines.\n\nRegards,\nAarav Sharma`,
   }
-  // TODO: unconfirmed — ask backend team for the real complaint-generation endpoint contract.
-  const res = await api.post(`/cases/${caseId}/complaint`)
-  return res.data
 }
 
 function delay(ms) {
