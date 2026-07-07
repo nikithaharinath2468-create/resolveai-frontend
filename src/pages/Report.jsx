@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Loader2, Download, AlertTriangle, FileText } from 'lucide-react'
-import jsPDF from 'jspdf'
-import { fetchAnalysis, generateComplaint } from '../services/api.js'
+import { fetchAnalysis, generateComplaint, downloadComplaintPdf } from '../services/api.js'
 
 export default function Report() {
   const [analysis, setAnalysis] = useState(null)
@@ -25,28 +24,12 @@ export default function Report() {
     setGenerating(false)
   }
 
-  function handleDownload() {
-  const doc = new jsPDF()
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const margin = 20
-  const maxWidth = pageWidth - margin * 2
-
-  doc.setFontSize(16)
-  doc.setFont(undefined, 'bold')
-  doc.text('ResolveAI — Dispute Complaint', margin, 20)
-
-  doc.setFontSize(10)
-  doc.setFont(undefined, 'normal')
-  doc.text(`Case ID: ${caseId}`, margin, 28)
-
-  doc.setDrawColor(200)
-  doc.line(margin, 32, pageWidth - margin, 32)
-
-  doc.setFontSize(11)
-  const lines = doc.splitTextToSize(complaint, maxWidth)
-  doc.text(lines, margin, 42)
-
-  doc.save(`${caseId}-complaint.pdf`)
+  async function handleDownload() {
+  try {
+    await downloadComplaintPdf(caseId)
+  } catch (err) {
+    console.error('PDF download failed:', err)
+  }
 }
 
   if (loading) {

@@ -7,7 +7,7 @@ import axios from 'axios'
 export const USE_MOCK_DATA = false
 
 export const api = axios.create({
-  baseURL: 'https://resolveai-backend-7r20.onrender.com',
+  baseURL: 'https://resolveai-backend-1.onrender.com',
 })
 
 // Attach JWT automatically to every request once you're using real auth
@@ -187,11 +187,33 @@ export async function fetchAnalysis(caseId) {
 }
 
 export async function generateComplaint(caseId) {
-  // Always mock for now — this endpoint doesn't exist on the backend yet.
-  await delay(1000)
-  return {
-    text: `To,\nThe Grievance Redressal Officer,\nHDFC Bank\n\nSubject: Unauthorised UPI Transaction — UTR 302819473615 — Case ${caseId}\n\nI am writing to report an unauthorised debit of ₹24,500 from my account on 28 Jun 2026 at 14:04:11 to VPA fraudster@ybl. This transaction was preceded by a fraudulent OTP request and was not authorised by me. I request an immediate investigation and reversal under RBI's Limited Liability guidelines.\n\nRegards,\nAarav Sharma`,
+  if (USE_MOCK_DATA) {
+    await delay(1000)
+    return {
+      text: `To,\nThe Grievance Redressal Officer,\nHDFC Bank\n\nSubject: Unauthorised UPI Transaction — UTR 302819473615 — Case ${caseId}\n\nI am writing to report an unauthorised debit of ₹24,500 from my account on 28 Jun 2026 at 14:04:11 to VPA fraudster@ybl. This transaction was preceded by a fraudulent OTP request and was not authorised by me. I request an immediate investigation and reversal under RBI's Limited Liability guidelines.\n\nRegards,\nAarav Sharma`,
+    }
   }
+  const res = await api.get(`/cases/${caseId}/complaint`)
+  return { text: res.data.complaint_text }
+}
+export async function downloadComplaintPdf(caseId) {
+  const res = await api.get(`/cases/${caseId}/complaint/pdf`, {
+    responseType: 'blob',
+  })
+
+  const disposition = res.headers['content-disposition']
+  let filename = `${caseId}-complaint.pdf`
+  if (disposition) {
+    const match = disposition.match(/filename="?([^"]+)"?/)
+    if (match) filename = match[1]
+  }
+
+  const url = URL.createObjectURL(res.data)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 function delay(ms) {
