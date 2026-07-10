@@ -174,10 +174,27 @@ export async function uploadEvidence(caseId, files, fileType = 'screenshot') {
 // the functions above were fixed.
 // ---------------------------------------------------------------------------
 
+export async function generateTimeline(caseId) {
+  const res = await api.post(`/cases/${caseId}/timeline/generate`)
+  return res.data
+}
+export async function generateFraudAnalysis(caseId) {
+  const res = await api.post(`/cases/${caseId}/fraud-analysis`)
+  return res.data
+}
+
+export async function fetchFraudIndicators(caseId) {
+  const res = await api.get(`/cases/${caseId}/fraud-indicators`)
+  return res.data
+}
+
 export async function fetchTimeline(caseId) {
-  // Always mock for now — this endpoint doesn't exist on the backend yet.
-  await delay(600)
-  return MOCK_TIMELINE
+  if (USE_MOCK_DATA) {
+    await delay(600)
+    return MOCK_TIMELINE
+  }
+  const res = await api.get(`/cases/${caseId}/timeline`)
+  return res.data
 }
 
 export async function fetchAnalysis(caseId) {

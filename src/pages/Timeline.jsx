@@ -1,21 +1,32 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Loader2, ArrowRight } from 'lucide-react'
-import { fetchTimeline } from '../services/api.js'
-import StatusBadge from '../components/StatusBadge.jsx'
+import { Loader2, ArrowRight, Sparkles } from 'lucide-react'
+import { fetchTimeline, generateTimeline } from '../services/api.js'
 
 export default function Timeline() {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
+  const [generating, setGenerating] = useState(false)
   const { caseId } = useParams()
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetchTimeline(caseId).then((data) => {
-      setEvents(data)
-      setLoading(false)
-    })
+    loadTimeline()
   }, [caseId])
+
+  async function loadTimeline() {
+    setLoading(true)
+    const data = await fetchTimeline(caseId)
+    setEvents(data)
+    setLoading(false)
+  }
+
+  async function handleGenerate() {
+    setGenerating(true)
+    await generateTimeline(caseId)
+    await loadTimeline()
+    setGenerating(false)
+  }
 
   return (
     <div className="max-w-2xl">
@@ -27,7 +38,19 @@ export default function Timeline() {
       {loading ? (
         <div className="flex items-center gap-2 text-slate text-sm py-12 justify-center">
           <Loader2 size={18} className="animate-spin" />
-          Reconstructing timeline from evidence…
+          Loading timeline…
+        </div>
+      ) : events.length === 0 ? (
+        <div className="border-2 border-dashed border-ink/15 rounded-xl py-16 text-center">
+          <p className="text-slate mb-4">No timeline yet — generate one from this case's evidence.</p>
+          <button
+            onClick={handleGenerate}
+            disabled={generating}
+            className="inline-flex items-center gap-2 bg-ink text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-ink-light transition-colors disabled:opacity-60"
+          >
+            {generating ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+            {generating ? 'Generating…' : 'Generate timeline'}
+          </button>
         </div>
       ) : (
         <div className="relative pl-6 border-l-2 border-ink/10 space-y-6">
@@ -35,23 +58,21 @@ export default function Timeline() {
             <div key={event.id} className="relative">
               <span
                 className={`absolute -left-[29px] top-1 w-3 h-3 rounded-full border-2 border-paper ${
-                  event.flag === 'critical' ? 'bg-alert' : event.flag === 'suspicious' ? 'bg-pending' : 'bg-verified'
+                  event.event_time ? 'bg-verified' : 'bg-slate-light'
                 }`}
               />
               <div className="bg-paper-raised border border-ink/10 rounded-xl p-4">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="font-mono text-xs text-slate-light">{event.time}</span>
-                  <StatusBadge status={event.flag} />
-                </div>
-                <h3 className="font-display font-semibold text-sm text-ink mb-1">{event.label}</h3>
-                <p className="text-sm text-slate font-mono">{event.detail}</p>
+                <span className="font-mono text-xs text-slate-light block mb-1.5">
+                  {event.event_time ? new Date(event.event_time).toLocaleString() : 'No exact time available'}
+                </span>
+                <p className="text-sm text-ink">{event.event_description}</p>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {!loading && (
+      {!loading && events.length > 0 && (
         <button
           onClick={() => navigate(`/cases/${caseId}/report`)}
           className="w-full flex items-center justify-center gap-2 bg-ink text-white rounded-lg py-2.5 text-sm font-medium hover:bg-ink-light transition-colors mt-8"
