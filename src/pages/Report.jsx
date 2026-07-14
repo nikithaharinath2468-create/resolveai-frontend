@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Loader2, Download, AlertTriangle, FileText, Sparkles } from 'lucide-react'
+import { Loader2, Download, AlertTriangle, FileText, Sparkles, Copy, Check } from 'lucide-react'
 import { generateFraudAnalysis, fetchFraudIndicators, generateComplaint, downloadComplaintPdf } from '../services/api.js'
 
 export default function Report() {
@@ -11,6 +11,7 @@ export default function Report() {
   const [complaint, setComplaint] = useState(null)
   const [generatingComplaint, setGeneratingComplaint] = useState(false)
   const [downloading, setDownloading] = useState(false)
+  const [copied, setCopied] = useState(false)
   const { caseId } = useParams()
 
   useEffect(() => {
@@ -48,6 +49,15 @@ export default function Report() {
     }
     setDownloading(false)
   }
+   async function handleCopy() {
+  try {
+    await navigator.clipboard.writeText(complaint)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  } catch (err) {
+    console.error('Copy failed:', err)
+  }
+}
 
   return (
     <div className="max-w-2xl">
@@ -58,9 +68,8 @@ export default function Report() {
 
       <section className="bg-paper-raised border border-ink/10 rounded-xl p-6 mb-6">
         <h2 className="font-display font-semibold text-sm text-ink mb-4 uppercase tracking-wide">
-          Fraud indicators
-        </h2>
-
+  Fraud indicators
+</h2>
         {loadingIndicators ? (
           <div className="flex items-center gap-2 text-slate text-sm py-4 justify-center">
             <Loader2 size={18} className="animate-spin" />
@@ -99,9 +108,20 @@ export default function Report() {
       </section>
 
       <section className="bg-paper-raised border border-ink/10 rounded-xl p-6">
-        <h2 className="font-display font-semibold text-sm text-ink mb-4 uppercase tracking-wide">
-          Dispute complaint
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+  <h2 className="font-display font-semibold text-sm text-ink uppercase tracking-wide">
+    Dispute complaint
+  </h2>
+  {complaint && (
+    <button
+      onClick={handleCopy}
+      className="flex items-center gap-1.5 text-xs font-medium text-slate hover:text-ink transition-colors"
+    >
+      {copied ? <Check size={14} className="text-verified" /> : <Copy size={14} />}
+      {copied ? 'Copied' : 'Copy'}
+    </button>
+  )}
+</div>
 
         {!complaint ? (
           <button
