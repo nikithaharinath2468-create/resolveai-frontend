@@ -23,8 +23,9 @@ export default function CreateCase() {
     <div className="max-w-xl">
       <h1 className="font-display font-semibold text-2xl text-ink mb-1">Create a fraud case</h1>
       <p className="text-sm text-slate mb-8">
-  Give your case a short title. On the next step, you'll upload screenshots or PDFs —
+  Give your case a short title. On the next step, you'll upload screenshots —
   our AI will automatically extract the amount, UTR, and account details from them.
+  <span className="block text-xs text-pending mt-1">PDF support is coming in a later update.</span>
 </p>
 
       <form onSubmit={handleSubmit} className="bg-paper-raised border border-ink/10 rounded-xl p-6 space-y-5">
