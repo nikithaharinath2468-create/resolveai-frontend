@@ -2,6 +2,14 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Loader2, ArrowRight, Sparkles } from 'lucide-react'
 import { fetchTimeline, generateTimeline } from '../services/api.js'
+function formatEventTime(isoString) {
+  if (!isoString) return null
+  const match = isoString.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/)
+  if (!match) return isoString
+  const [, year, month, day, hour, minute] = match
+  const date = new Date(year, month - 1, day, hour, minute)
+  return date.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
+}
 
 export default function Timeline() {
   const [events, setEvents] = useState([])
@@ -63,7 +71,7 @@ export default function Timeline() {
               />
               <div className="bg-paper-raised border border-ink/10 rounded-xl p-4">
                 <span className="font-mono text-xs text-slate-light block mb-1.5">
-                  {event.event_time ? new Date(event.event_time).toLocaleString() : 'No exact time available'}
+                  {event.event_time ? formatEventTime(event.event_time) : 'No exact time available'}
                 </span>
                 <p className="text-sm text-ink">{event.event_description}</p>
               </div>
