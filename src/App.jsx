@@ -18,6 +18,7 @@ export default function App() {
 
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/cases/new" element={<ProtectedRoute><CreateCase /></ProtectedRoute>} />
+      <Route path="/cases/:caseId/edit" element={<ProtectedRoute><CreateCase /></ProtectedRoute>} />
       <Route path="/cases/history" element={<ProtectedRoute><CaseHistory /></ProtectedRoute>} />
       <Route path="/cases/:caseId" element={<ProtectedRoute><CaseDetail /></ProtectedRoute>} />
       <Route path="/cases/:caseId/upload" element={<ProtectedRoute><UploadEvidence /></ProtectedRoute>} />

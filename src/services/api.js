@@ -144,7 +144,10 @@ export async function createCase(payload) {
   })
   return res.data
 }
-
+ export async function updateCase(caseId, payload) {
+  const res = await api.patch(`/cases/${caseId}`, payload)
+  return res.data
+}
 // NOTE: this now requires a fileType alongside the files, since the backend
 // applies ONE file_type to the whole upload batch. Default to 'screenshot'
 // since that's the most common evidence type — pass a different one
