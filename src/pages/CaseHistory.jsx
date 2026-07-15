@@ -4,6 +4,13 @@ import { Loader2 } from 'lucide-react'
 import { fetchCases } from '../services/api.js'
 import StatusBadge from '../components/StatusBadge.jsx'
 
+function formatDate(dateString) {
+  if (!dateString) return '—'
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) return dateString
+  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
 export default function CaseHistory() {
   const [cases, setCases] = useState([])
   const [loading, setLoading] = useState(true)
@@ -59,11 +66,13 @@ export default function CaseHistory() {
                 >
                   <td className="px-5 py-3.5 font-mono text-xs text-slate">{c.id}</td>
                   <td className="px-5 py-3.5 text-ink font-medium">{c.title}</td>
-                  <td className="px-5 py-3.5 font-mono text-ink">₹{c.amount.toLocaleString('en-IN')}</td>
+                  <td className="px-5 py-3.5 font-mono text-ink">
+  {c.amount != null ? `₹${c.amount.toLocaleString('en-IN')}` : 'Amount not yet extracted'}
+</td>
                   <td className="px-5 py-3.5">
                     <StatusBadge status={c.status} />
                   </td>
-                  <td className="px-5 py-3.5 text-slate-light">{c.createdAt}</td>
+                  <td className="px-5 py-3.5 text-slate-light">{formatDate(c.createdAt)}</td>
                 </tr>
               ))}
             </tbody>

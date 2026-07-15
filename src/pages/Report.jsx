@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Loader2, Download, AlertTriangle, FileText, Sparkles, Copy, Check } from 'lucide-react'
 import { generateFraudAnalysis, fetchFraudIndicators, generateComplaint, downloadComplaintPdf } from '../services/api.js'
 
@@ -13,6 +13,7 @@ export default function Report() {
   const [downloading, setDownloading] = useState(false)
   const [copied, setCopied] = useState(false)
   const { caseId } = useParams()
+  const navigate = useNavigate()
 
   useEffect(() => {
     loadIndicators()
@@ -86,6 +87,8 @@ export default function Report() {
       {analyzing ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
       {analyzing ? 'Analyzing…' : 'Run fraud analysis'}
     </button>
+   
+
   </div>
 ) : indicators.length === 0 && hasAnalyzed ? (
   <p className="text-sm text-verified">Analysis complete — no specific fraud patterns were confidently identified from the current evidence.</p>
@@ -132,6 +135,7 @@ export default function Report() {
             {generatingComplaint ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
             {generatingComplaint ? 'Drafting complaint…' : 'Generate complaint letter'}
           </button>
+           
         ) : (
           <>
             <pre className="whitespace-pre-wrap font-mono text-xs text-ink bg-paper rounded-lg p-4 border border-ink/10 mb-4">
@@ -145,6 +149,13 @@ export default function Report() {
               {downloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
               {downloading ? 'Preparing PDF…' : 'Download report'}
             </button>
+            <button
+  onClick={() => navigate('/cases/history')}
+  className="w-full border border-ink/15 text-ink rounded-lg py-2.5 text-sm font-medium hover:bg-ink/5 transition-colors mt-3"
+>
+  Done
+</button>
+            
           </>
         )}
       </section>

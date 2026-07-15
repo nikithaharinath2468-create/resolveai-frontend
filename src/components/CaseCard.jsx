@@ -24,7 +24,9 @@ export default function CaseCard({ caseData }) {
       <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full mb-2 ${FRAUD_TYPE_COLORS[fraudType] || 'bg-slate-light/20 text-slate'}`}>
   {fraudType}
 </span>
-      <p className="font-mono text-lg text-ink mb-3">₹{amount.toLocaleString('en-IN')}</p>
+      <p className="font-mono text-lg text-ink mb-3">
+  {amount != null ? `₹${amount.toLocaleString('en-IN')}` : 'Amount not yet extracted'}
+</p>
 
       <div className="flex items-center justify-between mb-3">
         <StatusBadge status={status} />

@@ -116,12 +116,11 @@ export async function fetchCases() {
     return MOCK_CASES
   }
   const res = await api.get('/cases/')
-  // Backend returns `total_amount` (computed from evidence) — map it to
-  // `amount` here so CaseCard.jsx and CaseHistory.jsx don't need to change.
   return res.data.map((c) => ({
-    ...c,
-    amount: c.total_amount ?? 0,
-  }))
+  ...c,
+  amount: c.total_amount,
+  createdAt: c.created_at,
+}))
 }
 
 export async function createCase(payload) {
