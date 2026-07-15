@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Loader2 } from 'lucide-react'
-import { fetchCases } from '../services/api.js'
+import { Loader2, Trash2 } from 'lucide-react'
+import { fetchCases, deleteCase } from '../services/api.js'
 import StatusBadge from '../components/StatusBadge.jsx'
 
 function formatDate(dateString) {
@@ -14,6 +14,7 @@ function formatDate(dateString) {
 export default function CaseHistory() {
   const [cases, setCases] = useState([])
   const [loading, setLoading] = useState(true)
+  const [deletingId, setDeletingId] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const navigate = useNavigate()
 
@@ -23,6 +24,16 @@ export default function CaseHistory() {
       setLoading(false)
     })
   }, [])
+  async function handleDelete(e, caseId) {
+  e.stopPropagation()
+  const confirmed = window.confirm('Are you sure you want to delete this case?')
+  if (!confirmed) return
+
+  setDeletingId(caseId)
+  await deleteCase(caseId)
+  setCases((prev) => prev.filter((c) => c.id !== caseId))
+  setDeletingId(null)
+}
    const filteredCases = cases.filter((c) =>
     c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.id.toLowerCase().includes(searchTerm.toLowerCase())
@@ -55,6 +66,7 @@ export default function CaseHistory() {
                 <th className="px-5 py-3 font-medium">Amount</th>
                 <th className="px-5 py-3 font-medium">Status</th>
                 <th className="px-5 py-3 font-medium">Filed on</th>
+                <th className="px-5 py-3 font-medium"></th>
               </tr>
             </thead>
             <tbody>
@@ -73,6 +85,16 @@ export default function CaseHistory() {
                     <StatusBadge status={c.status} />
                   </td>
                   <td className="px-5 py-3.5 text-slate-light">{formatDate(c.createdAt)}</td>
+                  <td className="px-5 py-3.5">
+  <button
+    onClick={(e) => handleDelete(e, c.id)}
+    disabled={deletingId === c.id}
+    className="text-slate-light hover:text-alert transition-colors disabled:opacity-40"
+    aria-label={`Delete case ${c.id}`}
+  >
+    {deletingId === c.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+  </button>
+</td>
                 </tr>
               ))}
             </tbody>

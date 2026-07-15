@@ -148,6 +148,9 @@ export async function createCase(payload) {
   const res = await api.patch(`/cases/${caseId}`, payload)
   return res.data
 }
+export async function deleteCase(caseId) {
+  await api.delete(`/cases/${caseId}`)
+}
 // NOTE: this now requires a fileType alongside the files, since the backend
 // applies ONE file_type to the whole upload batch. Default to 'screenshot'
 // since that's the most common evidence type — pass a different one
