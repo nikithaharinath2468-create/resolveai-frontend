@@ -109,7 +109,10 @@ export async function loginUser(identifier, password) {
   })
   return res.data
 }
-
+export async function fetchCaseById(caseId) {
+  const res = await api.get(`/cases/${caseId}`)
+  return res.data
+}
 export async function fetchCases() {
   if (USE_MOCK_DATA) {
     await delay(400)
@@ -151,6 +154,7 @@ export async function uploadEvidence(caseId, files, fileType = 'screenshot') {
     await delay(1200)
     return { success: true, filesProcessed: files.length }
   }
+  
 
   const formData = new FormData()
   formData.append('case_id', caseId)
@@ -163,6 +167,10 @@ export async function uploadEvidence(caseId, files, fileType = 'screenshot') {
   })
 
   // Response is an ARRAY of evidence objects (one per file), not a single object.
+  return res.data
+}
+export async function fetchEvidenceForCase(caseId) {
+  const res = await api.get(`/evidence/case/${caseId}`)
   return res.data
 }
 

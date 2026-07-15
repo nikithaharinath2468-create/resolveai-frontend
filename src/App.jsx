@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
+import CaseDetail from './pages/CaseDetail.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import CreateCase from './pages/CreateCase.jsx'
 import UploadEvidence from './pages/UploadEvidence.jsx'
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/cases/new" element={<ProtectedRoute><CreateCase /></ProtectedRoute>} />
       <Route path="/cases/history" element={<ProtectedRoute><CaseHistory /></ProtectedRoute>} />
+      <Route path="/cases/:caseId" element={<ProtectedRoute><CaseDetail /></ProtectedRoute>} />
       <Route path="/cases/:caseId/upload" element={<ProtectedRoute><UploadEvidence /></ProtectedRoute>} />
       <Route path="/cases/:caseId/timeline" element={<ProtectedRoute><Timeline /></ProtectedRoute>} />
       <Route path="/cases/:caseId/report" element={<ProtectedRoute><Report /></ProtectedRoute>} />

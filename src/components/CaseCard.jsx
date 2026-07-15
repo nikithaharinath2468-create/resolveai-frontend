@@ -12,7 +12,7 @@ export default function CaseCard({ caseData }) {
 }
   return (
     <button
-      onClick={() => navigate(`/cases/${id}/timeline`)}
+      onClick={() => navigate(`/cases/${id}`)}
       className="w-full text-left bg-paper-raised border border-ink/10 rounded-xl p-5 hover:border-ink/30 hover:shadow-sm transition-all group"
     >
       <div className="flex items-start justify-between mb-3">
