@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
-import { createCase, fetchCaseById, updateCase, generateTimeline, generateFraudAnalysis } from '../services/api.js'
+import { createCase, fetchCaseById, updateCase } from '../services/api.js'
 
 export default function CreateCase() {
   const { caseId } = useParams()
@@ -12,8 +12,7 @@ export default function CreateCase() {
   const [loading, setLoading] = useState(false)
   const [loadingCase, setLoadingCase] = useState(isEditMode)
   const [error, setError] = useState('')
-  const [regeneratingStep, setRegeneratingStep] = useState('')
-  const navigate = useNavigate()
+ const navigate = useNavigate()
 
   useEffect(() => {
     if (isEditMode) {
@@ -26,29 +25,21 @@ export default function CreateCase() {
   }, [caseId])
 
   async function handleSubmit(e) {
-    e.preventDefault()
+  e.preventDefault()
 
-    if (isEditMode) {
-      setError('')
-      setLoading(true)
-      await updateCase(caseId, { title, description })
-
-      setRegeneratingStep('Regenerating timeline…')
-      await generateTimeline(caseId)
-
-      setRegeneratingStep('Re-running fraud analysis…')
-      await generateFraudAnalysis(caseId)
-
-      setLoading(false)
-      setRegeneratingStep('')
-      navigate(`/cases/${caseId}`)
-    } else {
-      setLoading(true)
-      const newCase = await createCase({ title, description })
-      setLoading(false)
-      navigate(`/cases/${newCase.id}/upload`)
-    }
+  if (isEditMode) {
+    setError('')
+    setLoading(true)
+    await updateCase(caseId, { title, description })
+    setLoading(false)
+    navigate(`/cases/${caseId}/upload`)
+  } else {
+    setLoading(true)
+    const newCase = await createCase({ title, description })
+    setLoading(false)
+    navigate(`/cases/${newCase.id}/upload`)
   }
+}
 
   if (loadingCase) {
     return (
@@ -102,17 +93,19 @@ export default function CreateCase() {
         {error && <p className="text-sm text-alert">{error}</p>}
 
         <button
-          type="submit"
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-2 bg-ink text-white rounded-lg py-2.5 text-sm font-medium hover:bg-ink-light transition-colors disabled:opacity-60"
-        >
-          {loading && <Loader2 size={16} className="animate-spin" />}
-          {loading
-            ? regeneratingStep || (isEditMode ? 'Saving…' : 'Creating case…')
-            : isEditMode
-            ? 'Save changes'
-            : 'Create case and continue'}
-        </button>
+  type="submit"
+  disabled={loading}
+  className="w-full flex items-center justify-center gap-2 bg-ink text-white rounded-lg py-2.5 text-sm font-medium hover:bg-ink-light transition-colors disabled:opacity-60"
+>
+  {loading && <Loader2 size={16} className="animate-spin" />}
+  {loading
+    ? isEditMode
+      ? 'Saving…'
+      : 'Creating case…'
+    : isEditMode
+    ? 'Save changes'
+    : 'Create case and continue'}
+</button>
       </form>
     </div>
   )
