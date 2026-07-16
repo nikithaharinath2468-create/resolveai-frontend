@@ -19,7 +19,10 @@ export default function Dashboard() {
   }, [])
 
   const activeCases = cases.filter((c) => c.status !== 'complaint_generated').length
-  const totalAmount = cases.reduce((sum, c) => sum + c.amount, 0)
+  const totalAmount = cases.reduce((sum, c) => {
+  const amt = Number(c.amount)
+  return isNaN(amt) ? sum : sum + amt
+}, 0)
 
   return (
     <div className="max-w-6xl">
